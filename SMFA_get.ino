@@ -12,13 +12,13 @@ int led_count = 0;
 //--------------------------------------------------
 
 //Pump
-#define pump 5
+int pump = 5;
 
 //Fan
-#define fan 6
+int fan = 6;
 
 //LED
-#define led 9
+int led = 9;
 
 void setup() {
   Serial.begin(9600); // 시리얼 모니터 통신속도 9600 설정
@@ -30,7 +30,7 @@ void setup() {
   Timer1.attachInterrupt(timerIsr);
 }
 void loop() {
-  int h = analogRead(A0); //습도 센
+  int h = analogRead(A0); //습도 센서
   int t = analogRead(A1); //온도 센서
   int soil = analogRead(A2); //토양 수분 센서
   int light = analogRead(A3); //조도 센서
@@ -42,22 +42,22 @@ void loop() {
   t_a = map(t, 0, 1023, 0, 50); // 온도 값 아날로그 신호 값 변환
 
   //------습도 값 읽기 카운터---------------------------
-  if (hum_count == 1000) {
+  if (hum_count == 700) {
     Hum(h_a);
     hum_count = 0;
   }
   //------온도 값 읽기 카운터---------------------------
-  if (temp_count == 1050) {
+  if (temp_count == 800) {
     Temp(t_a);
     temp_count = 0;
   }
   //------토양 습도 값 읽기 카운터---------------------------
-  if (soil_count == 1100) {
+  if (soil_count == 900) {
     Soil(soil);
     soil_count = 0;
   }
   //------조도 값 읽기 카운터---------------------------
-  if (light_count == 1150) {
+  if (light_count == 1000) {
     Light(light);
     light_count = 0;
   }
@@ -80,7 +80,7 @@ void loop() {
 
 //------------인터럽트를 위한 카운터 호출 함수----------------------
 void timerIsr() {
-  //
+  //전체 코드 카운트
   time_count += 1;
   //습도 센서 카운트
   hum_count += 1;
@@ -126,7 +126,7 @@ void Pump(int soil) {
   //추후 토양 수분 센서에 비례한 값을 이용하여 PWM 출력을 하도록 한다.
   int soil_pwm;
   soil_pwm = map(soil, 0, 1023, 0, 12); //펌프의 PWM 출력을 위한 
-  if (soil > 600) {
+  if (soil > 750) {
     digitalWrite(pump, HIGH);
   } else {
     digitalWrite(pump, LOW);
@@ -152,10 +152,9 @@ void Fan(int temp) {
 void LED(int light) {
   //추후 조도 센서에 비례한 값을 이용하여 PWM 출력을 하도록 한다.
   int light_pwm;
-  light_pwm = map(temp, 0, 1023, 0, 12);
   if (light > 600) {
-    digitalWrite(temp, HIGH);
+    digitalWrite(led, HIGH);
   } else {
-    digitalWrite(temp, LOW);
+    digitalWrite(led, LOW);
   }
 }
